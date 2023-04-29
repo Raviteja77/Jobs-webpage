@@ -14,4 +14,12 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     email = EmailField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Submit!")
+    submit = SubmitField("Login!")
+
+class PostJobForm(FlaskForm):
+    job_title = StringField("Job Title", validators=[DataRequired()])
+    salary_range = StringField("Salary Range", validators=[DataRequired()])
+    company = StringField("Company", validators=[DataRequired()])
+    job_category = StringField("Job Category", validators=[DataRequired()])
+    job_description = StringField("Job Description", validators=[DataRequired()])
+    submit = SubmitField("Post Job!")

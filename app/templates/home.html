@@ -1,5 +1,45 @@
 {% extends 'layout.html' %}
-{% block title %}Home{% endblock %}
+
+{% block title %}Job Openings{% endblock %}
+
 {% block content %}
-This is home page
+
+<div class="container">
+    <h1 class="mb-4">Job Openings</h1>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="GET" action="{{ url_for('main.index') }}">
+                <div class="input-group" style="display: flex;">
+                    <input type="text" class="form-control" name="category" value="{{ category }}"
+                        placeholder="Search by job category...">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+        {% if current_user.is_authenticated and current_user.role == 'manager' %}
+        <div class="col-md-6 text-right">
+            <a href="{{ url_for('main.create_job') }}" class="btn btn-primary">Create a new job posting</a>
+        </div>
+        {% endif %}
+    </div>
+    {% if jobs %}
+    <ul class="list-group mb-4">
+        {% for job in jobs %}
+            {% if category != None or category in categories %}
+        <li class="list-group-item" style="margin: 1rem 0;">
+            <h4 class="mb-1"><a href="/job-detail/{{job.id}}">{{ job.company }}</a></h4>
+            <small>{{ job.posted_date.strftime('%b %d, %Y') }}</small>
+            <h3 class="mb-1">{{ job.job_title }}</h3>
+            <p class="mb-1">{{job.job_description}}</p>
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        No job openings available.
+    </div>
+    {% endif %}
+</div>
+
 {% endblock %}

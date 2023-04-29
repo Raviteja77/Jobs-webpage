@@ -6,7 +6,7 @@ from .forms import LoginForm, RegisterForm
 from . import main
 from flask import render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
@@ -25,28 +25,13 @@ def login():
         else:
             flash('Email does not exist.', category='error')
     loginForm = LoginForm()
-    return render_template("login.html", form=loginForm)
-# @main.route("/login", methods=["POST", "GET"])
-# def login():
-#     if request.method == "POST":
-#         email = request.form.get("email")
-#         password = request.form.get("password")
+    return render_template("login.html", form=loginForm, user = current_user)
 
-#         user = User.query.filter_by(email=email).first()
-#         if not user or not user.check_password(password):
-#             return jsonify({"message": "Invalid username or password."}), 401
-#         return jsonify({"message": "Logged in successfully."}), 200
-#     loginForm = LoginForm()
-#     return render_template("login.html", form = loginForm)
-
-# @main.route("/logout", methods=["POST"])
-# @login_required
-# def logout():
-#     return jsonify({"message": "Logged out successfully."}), 200
-@main.route('/logout', methods=["POST"])
+@main.route('/logout')
 @login_required
 def logout():
     logout_user()
+    flash('You have been logged out.', category='success')
     return redirect(url_for('main.login'))
 
 @main.route("/register", methods=["POST", "GET"])
@@ -74,6 +59,6 @@ def register():
             db.session.commit()
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
-            return url_for("main.home")
+            return redirect(url_for('main.index'))
     registerForm = RegisterForm()
-    return render_template("register.html", form = registerForm)
+    return render_template("register.html", form = registerForm, user = current_user)

@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block title %}Show Job{% endblock %}
+
+{% block content %}
+<div class="container" style="border: 1px solid #C5C5C4;">
+  <h1 class="mb-4">{{ job.company }}</h1>
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title"><strong>Job Title:</strong>{{ job.job_title }}</h5>
+      <p class="card-text"><strong>Salary Range:</strong> ${{ job.salary_range }}</p>
+      <p class="card-text"><strong>Posted Date:</strong> {{ job.posted_date.strftime('%b %d, %Y') }}</p>
+      <p class="card-text">{{ job.job_description }}</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
