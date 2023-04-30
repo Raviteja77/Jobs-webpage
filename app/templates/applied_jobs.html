@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %}Applied Jobs{% endblock %}
+
+{% block content %}
+{% if jobs %}
+
+<ul class="list-group mb-4">
+    {% for job in jobs %}
+    <li class="list-group-item" style="margin: 1rem 0;">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h3 class="mb-1"><a href="/job-detail/{{job.id}}">{{ job.job_title }}</a></h3>
+            </div>
+        </div>
+        <h4 class="mb-1">{{ job.company }}</h4>
+        <p class="mb-1">{{job.job_description}}</p>
+        <div class="alert alert-success text-center" role="alert">
+            You have applied for this job.
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="alert alert-warning text-center" role="alert">
+    You have not applied for any job.
+</div>
+{% endif %}
+{% endblock %}

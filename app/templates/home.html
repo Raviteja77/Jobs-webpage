@@ -10,11 +10,24 @@
         <div class="col-md-6">
             <form method="GET" action="{{ url_for('main.index') }}">
                 <div class="input-group" style="display: flex;">
-                    <input type="text" class="form-control" name="category" value="{{ category }}"
-                        placeholder="Search by job category...">
+                    <select style="width: 65%;appearance: none;
+                    background: url('https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-arrow-down-512.png') no-repeat scroll right center transparent;
+                    background-size: 15px;
+                    padding-right: 25px;
+                    border: 1px solid #ced4da;
+                    border-radius: 4px;
+                    font-size: 16px;
+                    font-weight: 400;line-height: 1.5;color: #495057;" class="form-select" name="category">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.lower() }}" {% if cat.lower()==category %}selected{% endif %}>{{ cat.title() }}
+                        </option>
+                        {% endfor %}
+                    </select>
                     <button type="submit" class="btn btn-primary">Search</button>
                 </div>
             </form>
+
         </div>
         {% if current_user.is_authenticated and current_user.role == 'manager' %}
         <div class="col-md-6 text-right">
@@ -25,11 +38,25 @@
     {% if jobs %}
     <ul class="list-group mb-4">
         {% for job in jobs %}
-            {% if category != None or category in categories %}
+        {% if category != None or category in categories %}
         <li class="list-group-item" style="margin: 1rem 0;">
-            <h4 class="mb-1"><a href="/job-detail/{{job.id}}">{{ job.company }}</a></h4>
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h3 class="mb-1"><a href="/job-detail/{{job.id}}">{{ job.job_title }}</a></h3>
+                </div>
+                {% if current_user.is_authenticated and current_user.role == 'applicant' %}
+                <div class="col-md-4 text-right">
+                    <a href="/applicant-applied-jobs/{{job.id}}" class="btn btn-primary">Apply Job</a>
+                </div>
+                {% endif %}
+                {% if current_user.is_authenticated and current_user.role == 'manager' %}
+                <div class="col-md-4 text-right">
+                    <a href="/close-job/{{job.id}}" class="btn btn-danger">Close Job</a>
+                </div>
+                {% endif %}
+            </div>
             <small>{{ job.posted_date.strftime('%b %d, %Y') }}</small>
-            <h3 class="mb-1">{{ job.job_title }}</h3>
+            <h4 class="mb-1">{{ job.company }}</h4>
             <p class="mb-1">{{job.job_description}}</p>
         </li>
         {% endif %}

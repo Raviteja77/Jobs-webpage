@@ -58,7 +58,7 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
-            flash('Account created!', category='success')
+            flash('Account created! and successfully Logged in', category='success')
             return redirect(url_for('main.index'))
     registerForm = RegisterForm()
     return render_template("register.html", form = registerForm, user = current_user)

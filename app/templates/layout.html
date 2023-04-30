@@ -5,6 +5,9 @@
 <div class="navbar-collapse collapse">
     <ul class="nav navbar-nav">
         <li><a href="/">Home</a></li>
+        {% if user.is_authenticated and user.role == 'applicant' %}
+        <li><a href="/applied-jobs">Applied Jobs</a></li>
+        {% endif %}
         {% if user.is_authenticated %}
         <li><a href="/logout">Logout</a></li>
         {% else %}

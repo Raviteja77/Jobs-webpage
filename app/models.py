@@ -2,6 +2,10 @@ from flask_login import UserMixin
 from app import db
 from datetime import datetime
 
+user_job_association_table = db.Table('user_job_association',
+                                      db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                                      db.Column('job_id', db.Integer, db.ForeignKey('jobs.id')))
+
 class User(db.Model, UserMixin):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key = True)
@@ -11,9 +15,6 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(64))
     password = db.Column(db.String(100))
     role = db.Column(db.String(20))
-    
-    job_listings = db.relationship('Job', backref='users', lazy='dynamic')
-
 
 class Job(db.Model):
     __tablename__ = 'jobs'
@@ -27,4 +28,6 @@ class Job(db.Model):
     email = db.Column(db.String(140), nullable=False)
     posted_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     closed = db.Column(db.Boolean, nullable=False, default=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    users = db.relationship('User', secondary=user_job_association_table, backref=db.backref('jobs', lazy='dynamic'))
+

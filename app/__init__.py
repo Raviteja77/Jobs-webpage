@@ -6,7 +6,7 @@ from flask_login import LoginManager
 from os import path
 
 db = SQLAlchemy()
-DB_NAME = "jobapp.db"
+DB_NAME = "jobs_webapp.db"
 bootstrap = Bootstrap()
 
 def create_app(config_name):

@@ -3,7 +3,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = "mariadb://root:mysqlpassword@localhost/jobapp"
+    SQLALCHEMY_DATABASE_URI = "mariadb://root:mysqlpassword@localhost/jobs_webapp"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "mscs3150"
 

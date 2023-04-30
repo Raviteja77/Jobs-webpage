@@ -12,6 +12,16 @@
       <p class="card-text"><strong>Posted Date:</strong> {{ job.posted_date.strftime('%b %d, %Y') }}</p>
       <p class="card-text">{{ job.job_description }}</p>
     </div>
+    {% if current_user.is_authenticated and current_user.role == 'applicant' %}
+    <div style="margin-bottom: 2rem;">
+      <a href="/applicant-applied-jobs/{{job.id}}" class="btn btn-primary">Apply Job</a>
+    </div>
+    {% endif %}
+    {% if current_user.is_authenticated and current_user.role == 'manager' %}
+    <div style="margin-bottom: 2rem;">
+      <a href="/close-job/{{job.id}}" class="btn btn-danger">Close Job</a>
+    </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
