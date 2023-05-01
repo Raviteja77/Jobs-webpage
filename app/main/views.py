@@ -1,17 +1,27 @@
 from flask import flash, redirect, render_template, request, url_for
 from .forms import PostJobForm
-from app.models import Job, User
+from app.models import Application, Job, User
 from . import main
 from flask_login import login_required, current_user
 from app import db
 
 @main.route("/")
 def index():
-    category = request.args.get('category', '')
-    jobs = Job.query.filter(Job.job_category.ilike(f'%{category}%')).all()
-    jobs = [job for job in jobs if not job.closed]
     categories = ["Science and Research", "Manufacturing and Production", "Information Technology", "Human Resources", "Healthcare and Medical", "Education and Training", "Customer Service", "Communications", "Business Development", "Banking and Finance", "Architecture", "Agriculture"]
-    return render_template("home.html", jobs=jobs, user = current_user, category=category.lower(), categories=categories)
+    category = request.args.get('category', '')
+    search = request.args.get('search', '')
+
+    jobs_query = Job.query.filter(Job.closed == False)
+
+    if category:
+        jobs_query = jobs_query.filter(Job.job_category.ilike(f'%{category}%'))
+
+    if search:
+        jobs_query = jobs_query.filter((Job.job_title.ilike(f'%{search}%') | Job.job_description.ilike(f'%{search}%')))
+
+    jobs = jobs_query.all()
+
+    return render_template("home.html", jobs=jobs, user=current_user, category=category.lower(), categories=categories)
 
 @main.route("/create-job", methods=["POST", "GET"])
 @login_required
@@ -50,17 +60,28 @@ def close_job(id):
 
 @main.route("/applied-jobs")
 @login_required
-def apply_job():
-    user = User.query.get(current_user.id)
-    jobs = [job for job in user.jobs]
-    return render_template("applied_jobs.html", user = current_user, jobs = jobs)
+def applied_jobs():
+    user_id = current_user.id
+    applications = Application.query.filter_by(user_id=user_id).all()
+    jobs = [application.job for application in applications]
+    return render_template("applied_jobs.html", user=current_user, applications=applications, jobs = jobs)
 
 @main.route("/applicant-applied-jobs/<int:id>")
 @login_required
 def applicant_jobs(id):
     job = Job.query.get(id)
     user = current_user
-    user.jobs.append(job)
+    application = Application(user=user, job=job)
+    db.session.add(application)
     db.session.commit()
-    flash('User successfully applied the job', category='success')
+    flash('User successfully applied for the job', category='success')
     return redirect('/')
+
+@main.route("/applicants-list")
+@login_required
+def applicants():
+    applications = Application.query.all()
+    jobs = [application.job for application in applications if application.job.email == current_user.email]
+    applications = [application for application in applications if application.job.email == current_user.email]
+    print(len(jobs))
+    return render_template("job_applicants.html", user=current_user, applications=applications, jobs = jobs)

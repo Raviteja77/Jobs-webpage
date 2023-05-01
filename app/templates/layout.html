@@ -8,6 +8,9 @@
         {% if user.is_authenticated and user.role == 'applicant' %}
         <li><a href="/applied-jobs">Applied Jobs</a></li>
         {% endif %}
+        {% if user.is_authenticated and user.role == 'manager' %}
+        <li><a href="/applicants-list">Applicants</a></li>
+        {% endif %}
         {% if user.is_authenticated %}
         <li><a href="/logout">Logout</a></li>
         {% else %}

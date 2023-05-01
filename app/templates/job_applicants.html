@@ -15,16 +15,14 @@
         </div>
         <h4 class="mb-1">{{ application.job.company }}</h4>
         <p class="mb-1">{{application.job.job_description}}</p>
+        <h4>Applicant's Email: {{application.user.email}}</h4>
         <strong>Applied date: {{application.applied_date}}</strong>
-        <div class="alert alert-success text-center mt-3" role="alert">
-            You have applied for this job.
-        </div>
     </li>
     {% endfor %}
 </ul>
 {% else %}
 <div class="alert alert-warning text-center" role="alert" style="margin: 2rem;">
-    You have not applied for any job.
+    No person has applied to the job yet.
 </div>
 {% endif %}
 {% endblock %}

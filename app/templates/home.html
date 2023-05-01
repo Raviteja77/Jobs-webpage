@@ -6,6 +6,12 @@
 
 <div class="container">
     <h1 class="mb-4">Job Openings</h1>
+    <form method="GET" action="{{ url_for('main.index') }}">
+        <div style="display: flex; margin: 1rem auto; width:65%; padding: 1rem">
+            <input style="height: 5vh;" type="search" class="form-control" placeholder="Search title or description..." name="search">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
     <div class="row mb-4">
         <div class="col-md-6">
             <form method="GET" action="{{ url_for('main.index') }}">
@@ -20,11 +26,12 @@
                     font-weight: 400;line-height: 1.5;color: #495057;" class="form-select" name="category">
                         <option value="">All Categories</option>
                         {% for cat in categories %}
-                        <option value="{{ cat.lower() }}" {% if cat.lower()==category %}selected{% endif %}>{{ cat.title() }}
+                        <option value="{{ cat.lower() }}" {% if cat.lower()==category %}selected{% endif %}>{{
+                            cat.title() }}
                         </option>
                         {% endfor %}
                     </select>
-                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button type="submit" class="btn btn-primary">Apply filter</button>
                 </div>
             </form>
 
