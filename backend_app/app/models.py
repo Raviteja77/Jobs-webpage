@@ -18,7 +18,6 @@ class User(db.Model, UserMixin):
 
 class Job(db.Model):
     __tablename__ = 'jobs'
-
     id = db.Column(db.Integer, primary_key=True)
     job_title = db.Column(db.String(140), nullable=False)
     salary_range = db.Column(db.String(140), nullable=False)

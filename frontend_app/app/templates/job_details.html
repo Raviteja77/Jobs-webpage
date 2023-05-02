@@ -9,7 +9,7 @@
     <div class="card-body">
       <h5 class="card-title"><strong>Job Title:</strong>{{ job.job_title }}</h5>
       <p class="card-text"><strong>Salary Range:</strong> ${{ job.salary_range }}</p>
-      <p class="card-text"><strong>Posted Date:</strong> {{ job.posted_date.strftime('%b %d, %Y') }}</p>
+      <p class="card-text"><strong>Posted Date:</strong> {{ job.posted_date }}</p>
       <p class="card-text">{{ job.job_description }}</p>
     </div>
     {% if current_user.is_authenticated and current_user.role == 'applicant' %}
