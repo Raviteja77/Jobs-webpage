@@ -48,16 +48,21 @@
         {% if category != None or category in categories %}
         <li class="list-group-item" style="margin: 1rem 0;">
             <div class="row mb-4">
-                <div class="col-md-8">
+                <div class="col-md-10">
                     <h3 class="mb-1"><a href="/job-detail/{{job.id}}">{{ job.job_title }}</a></h3>
                 </div>
                 {% if current_user.is_authenticated and current_user.role == 'applicant' %}
-                <div class="col-md-4 text-right">
+                <div class="col-md-1.5 text-right">
+                    {% if job.id in applications %}
+                    <p class="alert alert-warning">Already applied</p>
+                    <a href="/applicant-withdraw-job/{{job.id}}" class="btn btn-warning">Withdraw Job</a>
+                    {% else %}
                     <a href="/applicant-applied-jobs/{{job.id}}" class="btn btn-primary">Apply Job</a>
+                    {% endif %}
                 </div>
                 {% endif %}
                 {% if current_user.is_authenticated and current_user.role == 'manager' %}
-                <div class="col-md-4 text-right">
+                <div class="col-md-2 text-right">
                     <a href="/close-job/{{job.id}}" class="btn btn-danger">Close Job</a>
                 </div>
                 {% endif %}

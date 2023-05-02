@@ -5,9 +5,30 @@ from . import main
 from app import db
 from flask_restful import Resource, reqparse
 
+class JobApplication(Resource):
+    def get(self, id):
+        applications = Application.query.filter(Application.user_id == id).all()
+        serialized_applications = []
+        for application in applications:
+            serialized_application = {
+                'job_id': application.job_id
+            }
+            serialized_applications.append(serialized_application)
+        return json.dumps(serialized_applications, default=str), 200
+    
+    def delete(self, id):
+        application = Application.query.filter(Application.job_id == id).first()
+        if not application:
+            return {'message': 'Job application not found', 'status': 'error'}, 404
+        db.session.delete(application)
+        db.session.commit()
+        return {'message': 'Job application withdrawn successfully!', 'status': 'success'}, 200
+
+
 class SingleJob(Resource):
     applicant_job_parser = reqparse.RequestParser()
     applicant_job_parser.add_argument('id', type=int)
+    applicant_job_parser.add_argument('closed', type=bool)
     def get(self, id):
         job = Job.query.get(id)
         serialized_job = {
@@ -24,21 +45,20 @@ class SingleJob(Resource):
     
     def put(self, id):
         job = Job.query.get(id)
-        job.closed = True
+        data = SingleJob.applicant_job_parser.parse_args()
+        if data['closed']:
+            job.closed = data['closed']
         db.session.add(job)
         db.session.commit()
-        return {'message': 'Job closed successfully!', 'status': 'success'}, 200
+        if data['closed']:
+            return {'message': 'Job closed successfully!', 'status': 'success'}, 200
+        return {'message': 'Job updated successfully!', 'status': 'success'}, 200
     
     def post(self, id):
-        print('test1')
         job = Job.query.get(id)
-        print('test2')
         data = SingleJob.applicant_job_parser.parse_args()
-        print(data['id'])
         user = User.query.get(data)
-        print('test3')
         application = Application(user=user, job=job)
-        print('test4')
         db.session.add(application)
         db.session.commit()
         return {'message': 'User successfully applied for the job', 'status': 'success'}, 200
@@ -54,8 +74,7 @@ class JobPosting(Resource):
     create_job_parser.add_argument('closed', type=bool, required=True, help='Job is not closed by default')
     def get(self):
         try:
-            jobs_query = Job.query.filter(Job.closed == False)
-            jobs = jobs_query.all()
+            jobs = Job.query.filter(Job.closed == False).all()
             # Serialize each job object and add it to a list
             serialized_jobs = []
             for job in jobs:

@@ -11,12 +11,17 @@ SERVER_BASE_URL = "http://localhost:5001/api"
 
 @main.route("/")
 def index():
-    response = requests.get(SERVER_BASE_URL + "/jobs")
+    jobs_response = requests.get(SERVER_BASE_URL + "/jobs")
     categories = ["Science and Research", "Manufacturing and Production", "Information Technology", "Human Resources", "Healthcare and Medical", "Education and Training", "Customer Service", "Communications", "Business Development", "Banking and Finance", "Architecture", "Agriculture"]
     category = request.args.get('category', '')
     search = request.args.get('search', '')
 
-    jobs_query = json.loads(response.json())
+    id = current_user.id
+    applications_response = requests.get(f"http://localhost:5001/api/application/{id}")
+    applications_query = json.loads(applications_response.json())
+    applied_jobs = [d['job_id'] for d in applications_query]
+
+    jobs_query = json.loads(jobs_response.json())
 
     if category:
         jobs_query = [job for job in jobs_query if category in job['job_category'].lower()]
@@ -24,7 +29,7 @@ def index():
     if search:
         jobs_query = [job for job in jobs_query if search.lower() in job['job_title'].lower() or search.lower() in job['job_description'].lower()]
         
-    return render_template("home.html", jobs=jobs_query, user=current_user, category=category.lower(), categories=categories)
+    return render_template("home.html", jobs=jobs_query, applications=applied_jobs, user=current_user, category=category.lower(), categories=categories)
 
 @main.route("/create-job", methods=["POST", "GET"])
 @login_required
@@ -59,8 +64,21 @@ def show_job(id):
 @main.route("/close-job/<int:id>")
 @login_required
 def close_job(id):
+    data = {
+        'closed': True
+    }
     headers = {'Content-Type': 'application/json'}
-    response = requests.put(f"http://localhost:5001/api/job/{id}", headers=headers)
+    response = requests.put(f"http://localhost:5001/api/job/{id}", data=json.dumps(data), headers=headers)
+    decoded_response = response.json()
+
+    flash(decoded_response['message'], category=decoded_response['status'])
+    return redirect('/')
+
+@main.route("/applicant-withdraw-job/<int:id>")
+@login_required
+def withdraw_job(id):
+    headers = {'Content-Type': 'application/json'}
+    response = requests.delete(f"http://localhost:5001/api/application/{id}", headers=headers)
     decoded_response = response.json()
 
     flash(decoded_response['message'], category=decoded_response['status'])
