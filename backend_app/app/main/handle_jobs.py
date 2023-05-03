@@ -5,7 +5,30 @@ from . import main
 from app import db
 from flask_restful import Resource, reqparse
 
+class Applicants(Resource):
+    applicant_parser = reqparse.RequestParser()
+    applicant_parser.add_argument('email', type=str)
+
+    def get(self):
+        data = Applicants.applicant_parser.parse_args()
+        jobs = Job.query.filter_by(email=data['email']).all()
+        job_applications = []
+        for job in jobs:
+            num_applicants = Application.query.filter_by(job_id=job.id).count()
+            job_dict = {
+                'company': job.company,
+                'job_title': job.job_title,
+                'job_category': job.job_category,
+                'salary_range': job.salary_range,
+                'number_of_applicants': num_applicants
+            }
+            job_applications.append(job_dict)
+
+        return json.dumps(job_applications, default=str), 200
+
+
 class JobApplication(Resource):
+
     def get(self, id):
         applications = Application.query.filter(Application.user_id == id).all()
         serialized_applications = []
@@ -99,49 +122,3 @@ class JobPosting(Resource):
         db.session.add(new_job)
         db.session.commit()
         return {'message': 'Posted new job successfully!', 'status': 'success'}, 200
-
-    
-
-# @main.route("/api/create-job", methods=["POST", "GET"])
-# def create_job():
-#     if request.method == 'POST':
-#         job_title = request.form.get("job_title")
-#         salary_range = request.form.get("salary_range")
-#         company = request.form.get("company")
-#         job_category = request.form.get("job_category")
-#         job_description = request.form.get("job_description")
-#         email = ''
-#         closed = False
-#         new_job = Job(job_title = job_title, salary_range = salary_range, company = company, job_category = job_category, job_description = job_description, email = email, closed = closed)
-#         db.session.add(new_job)
-#         db.session.commit()
-
-
-# @main.route("/job-detail/<int:id>")
-# def show_job(id):
-#     job = Job.query.get(id)
-
-# @main.route("/close-job/<int:id>")
-# def close_job(id):
-#     job = Job.query.get(id)
-#     job.closed = True
-#     db.session.add(job)
-#     db.session.commit()
-
-# @main.route("/applied-jobs")
-# def applied_jobs():
-#     user_id = ''
-#     applications = Application.query.filter_by(user_id=user_id).all()
-#     jobs = [application.job for application in applications]
-
-# @main.route("/applicant-applied-jobs/<int:id>")
-# def applicant_jobs(id):
-#     job = Job.query.get(id)
-#     user = ''
-#     application = Application(user=user, job=job)
-#     db.session.add(application)
-#     db.session.commit()
-
-# @main.route("/applicants-list")
-# def applicants():
-#     applications = Application.query.all()

@@ -23,5 +23,33 @@
     </div>
     {% endif %}
   </div>
+  {% if current_user.is_authenticated and current_user.role == 'manager' %}
+  <hr/>
+  <h1>Applicants List</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Hiring Manager</th>
+        <th>Company</th>
+        <th>Job Title</th>
+        <th>Job Category</th>
+        <th>Salary Range</th>
+        <th>Number of Applicants</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for applicant in applicants %}
+      <tr>
+        <td>{{ user.first_name }}, {{ user.last_name }}</td>
+        <td>{{ applicant.company }}</td>
+        <td>{{ applicant.job_title }}</td>
+        <td>{{ applicant.job_category }}</td>
+        <td>{{ applicant.salary_range }}</td>
+        <td>{{ applicant.number_of_applicants }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
 </div>
 {% endblock %}

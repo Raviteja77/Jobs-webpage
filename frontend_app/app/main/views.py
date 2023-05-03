@@ -57,9 +57,15 @@ def create_job():
 @main.route("/job-detail/<int:id>")
 @login_required
 def show_job(id):
-    response = requests.get(f"http://localhost:5001/api/job/{id}")
-    job = json.loads(response.json())
-    return render_template("job_details.html", job = job, user = current_user)
+    job_response = requests.get(f"http://localhost:5001/api/job/{id}")
+    job = json.loads(job_response.json())
+    data = {
+        'email': current_user.email
+    }
+    headers = {'Content-Type': 'application/json'}
+    applicants_response = requests.get(f"http://localhost:5001/api/applicants", data=json.dumps(data), headers=headers)
+    job_applicants = json.loads(applicants_response.json())
+    return render_template("job_details.html", job = job, applicants = job_applicants, user = current_user)
 
 @main.route("/close-job/<int:id>")
 @login_required
@@ -96,20 +102,3 @@ def applicant_jobs(id):
     decoded_response = response.json()
     flash(decoded_response['message'], category=decoded_response['status'])
     return redirect('/')
-
-# @main.route("/applied-jobs")
-# @login_required
-# def applied_jobs():
-#     user_id = current_user.id
-#     applications = Application.query.filter_by(user_id=user_id).all()
-#     jobs = [application.job for application in applications]
-#     return render_template("applied_jobs.html", user=current_user, applications=applications, jobs = jobs)
-
-# @main.route("/applicants-list")
-# @login_required
-# def applicants():
-#     applications = Application.query.all()
-#     jobs = [application.job for application in applications if application.job.email == current_user.email]
-#     applications = [application for application in applications if application.job.email == current_user.email]
-#     print(len(jobs))
-#     return render_template("job_applicants.html", user=current_user, applications=applications, jobs = jobs)
