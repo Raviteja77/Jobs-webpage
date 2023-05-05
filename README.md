@@ -26,7 +26,7 @@ Overall, Find Jobs web application provides a convenient and streamlined way for
 
 ## Contributors
 
-Ravi Teja Geddada - (mailto:rgeddada@clarku.edu)
+Ravi Teja Geddada
 
 #
 
