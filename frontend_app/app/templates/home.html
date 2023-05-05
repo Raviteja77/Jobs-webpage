@@ -1,0 +1,84 @@
+{% extends 'layout.html' %}
+
+{% block title %}Find Jobs{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h1 class="mb-4">Job Openings</h1>
+    <form method="GET" action="{{ url_for('main.index') }}">
+        <div style="display: flex; margin: 1rem auto; width:65%; padding: 1rem">
+            <input style="height: 5vh;" type="search" class="form-control" placeholder="Search title or description..." name="search">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="GET" action="{{ url_for('main.index') }}">
+                <div class="input-group" style="display: flex;">
+                    <select style="width: 65%;appearance: none;
+                    background: url('https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-arrow-down-512.png') no-repeat scroll right center transparent;
+                    background-size: 15px;
+                    padding-right: 25px;
+                    border: 1px solid #ced4da;
+                    border-radius: 4px;
+                    font-size: 16px;
+                    font-weight: 400;line-height: 1.5;color: #495057;" class="form-select" name="category">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.lower() }}" {% if cat.lower()==category %}selected{% endif %}>{{
+                            cat.title() }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary">Apply filter</button>
+                </div>
+            </form>
+
+        </div>
+        {% if current_user.is_authenticated and current_user.role == 'manager' %}
+        <div class="col-md-6 text-right">
+            <a href="{{ url_for('main.create_job') }}" class="btn btn-primary">Create a new job posting</a>
+        </div>
+        {% endif %}
+    </div>
+    {% if jobs %}
+    <ul class="list-group mb-4">
+        {% for job in jobs %}
+        {% if category != None or category in categories %}
+        <li class="list-group-item" style="margin: 1rem 0;">
+            <div class="row mb-4">
+                <div class="col-md-10">
+                    <h3 class="mb-1"><a href="/job-detail/{{job.id}}">{{ job.job_title }}</a></h3>
+                </div>
+                {% if current_user.is_authenticated and current_user.role == 'applicant' %}
+                <div class="col-md-1.5 text-right">
+                    {% if job.id in applications %}
+                    <p class="alert alert-warning">Already applied</p>
+                    <a href="/applicant-withdraw-job/{{job.id}}" class="btn btn-warning">Withdraw Job</a>
+                    {% else %}
+                    <a href="/applicant-applied-jobs/{{job.id}}" class="btn btn-primary">Apply Job</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% if current_user.is_authenticated and current_user.role == 'manager' %}
+                <div class="col-md-2 text-right">
+                    <a href="/close-job/{{job.id}}" class="btn btn-danger">Close Job</a>
+                </div>
+                {% endif %}
+            </div>
+            <small>{{ job.posted_date }}</small>
+            <h4 class="mb-1">{{ job.company }}</h4>
+            <p class="mb-1" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">{{job.job_description}}</p>
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        No job openings available.
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
