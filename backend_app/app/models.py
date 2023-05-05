@@ -23,7 +23,7 @@ class Job(db.Model):
     salary_range = db.Column(db.String(140), nullable=False)
     company = db.Column(db.String(140), nullable=False)
     job_category = db.Column(db.String(64), nullable=False)
-    job_description = db.Column(db.String(65000), nullable=False)
+    job_description = db.Column(db.TEXT, nullable=False)
     email = db.Column(db.String(140), nullable=False)
     posted_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     closed = db.Column(db.Boolean, nullable=False, default=False)
