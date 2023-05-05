@@ -28,8 +28,6 @@ Overall, Find Jobs web application provides a convenient and streamlined way for
 
 Ravi Teja Geddada - (mailto:rgeddada@clarku.edu)
 
-Naveen Gorantha - (mailto:ngorantla@clarku.edu)
-
 #
 
 ## Database design
