@@ -69,7 +69,7 @@
             </div>
             <small>{{ job.posted_date }}</small>
             <h4 class="mb-1">{{ job.company }}</h4>
-            <p class="mb-1">{{job.job_description}}</p>
+            <p class="mb-1" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">{{job.job_description}}</p>
         </li>
         {% endif %}
         {% endfor %}
